@@ -1,3 +1,20 @@
+/*
+Copyright (C) 2018  Andrew Bernard
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 /**
   ******************************************************************************
   * @file    main.c
@@ -14,12 +31,10 @@
  *
  * if you want porting this code to another series of STM32 please refer to that MCU datasheet
  * to make modification
- *
- *Created by : Andrew Bernard
- *SORRY FOR BAD ENGLISH
  */
 
-/* The program continuously send random result for cos() function.
+/* README PLEASE!!! 
+The program continuously send random result for cos() function.
  * if EXTI0 interrupt happen the UART module will send "INTERRUPT!!!" word
  * the EXTI0 interrupt happen on falling edge in PIN A0 or PA0
  * The built GREEN Light in blue pill module or LED in PC13 will blink
@@ -116,14 +131,13 @@ int main(void)
 		sprintf((char * restrict)data,"random cos() --> %3.4f \r\n",cos(rand()));
 		uart_string(data);
 		HAL_UART_Transmit_IT(&uart_conf,"T",sizeof(uint8_t));
-		for(delay=0;delay <= 10000;delay++){}
+		for(delay=0;delay <= 10000;delay++){} /* DELAY ROUTINES */
 	}
 }
 
 int osc_clock_sys_config(void)
 {
-/* CPU SPEED 32MHz HSE--> 8MHz PLL=HSE*4 */
-
+/* CPU SPEED CONFIG : 32MHz (HSE--> 8MHz PLL=HSE*4) */
 RCC_OscInitTypeDef osc_conf;
 RCC_ClkInitTypeDef clk_conf;
 
@@ -164,27 +178,18 @@ void uart_string(uint8_t *data)
 
 }
 
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) /* EXTI0 INTERRUPT ROUTINES */
 {
 	sprintf((char * restrict)data,"INTERRUPT!!!\r\n");
 	uart_string(data);
 }
 
-void HAL_UART_TxCpltCallback (UART_HandleTypeDef *huart)
+void HAL_UART_TxCpltCallback (UART_HandleTypeDef *huart) /* UART INTERRUPT ROUTINES */
 {
 	int cnt,cnt_1;
 		for(cnt_1 = 0;cnt_1 <= 20;cnt_1++)
 		{
 			HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
-			for(cnt=0;cnt <= 10000;cnt++){}
+			for(cnt=0;cnt <= 10000;cnt++){} /* DELAY ROUTINES */
 		}
 }
-
-/*
-   int cnt,cnt_1;
-	for(cnt_1 = 0;cnt_1 <= 10;cnt_1++)
-	{
-		HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_13);
-		for(cnt=0;cnt <= 1000000;cnt++){}
-	}
- */
